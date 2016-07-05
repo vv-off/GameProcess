@@ -54,31 +54,41 @@ public class CommandParsing {
         }
     }
 
-    //Переделать последовательность вызовов команд
     public InputState getCommand() {
-        InputState state = InputState.HELP;
-        if (command.equalsIgnoreCase(InputState.NONE.toString())){
+        InputState state = InputState.ERROR_COMMAND;
+        if (command.equalsIgnoreCase(InputState.NONE.toString())) {
             state = InputState.NONE;
         }
-        if (command.equalsIgnoreCase(InputState.START.toString())){
+        if (command.equalsIgnoreCase(InputState.START.toString())) {
             listState.removeAll(listState);
             listState.add(InputState.START);
             state = InputState.START;
         }
-        if (command.equalsIgnoreCase(InputState.MAP.toString())){
-            if((listState.contains(InputState.START)) && (!listState.contains(InputState.FIRE))){
-                if(!listState.contains(InputState.MAP)) listState.add(InputState.MAP);
-                state = InputState.MAP;
-            }else state = InputState.NONE;
+        if (command.equalsIgnoreCase(InputState.MAP.toString())) {
+            if ((!listState.contains(InputState.START))) state = InputState.ERROR_MAP_NOT_START;
+            else if (listState.contains(InputState.FIRE)) {
+                state = InputState.ERROR_MAP_IS_FIGHTING;
+            } else {
+                if (listState.contains(InputState.MAP)) state = InputState.ERROR_MAP_IS_ALREADY;
+                else {
+                    listState.add(InputState.MAP);
+                    state = InputState.MAP;
+                }
+            }
         }
-        if (command.equalsIgnoreCase(InputState.EXIT.toString())){
-            state = InputState.EXIT;
-        }
-        if (coordinatesShot()){
-            if((listState.contains(InputState.START)) && (listState.contains(InputState.MAP))) {
-                if(!listState.contains(InputState.FIRE)) listState.add(InputState.FIRE);
+        if (coordinatesShot()) {
+            if ((!listState.contains(InputState.START))) state = InputState.ERROR_FIRE_NOT_START;
+            else if (!listState.contains(InputState.MAP)) state = InputState.ERROR_FIRE_NOT_MAP;
+            else {
+                if (!listState.contains(InputState.FIRE)) listState.add(InputState.FIRE);
                 state = InputState.FIRE;
-            }else state = InputState.START;
+            }
+        }
+        if (command.equalsIgnoreCase(InputState.HELP.toString())) {
+            state = InputState.HELP;
+        }
+        if (command.equalsIgnoreCase(InputState.EXIT.toString())) {
+            state = InputState.EXIT;
         }
         return state;
     }
