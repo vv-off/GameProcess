@@ -15,6 +15,8 @@ public class GameProcess {
         Map compMap = null;
         FletShips yourFlet = null;
         FletShips compFlet = null;
+        Fire yourFire = null;
+        Fire compFire = null;
 
         out:
         while (true) {
@@ -25,21 +27,43 @@ public class GameProcess {
                 case START:
                     yourMap = new Map(12);
                     compMap = new Map(12);
-                    yourFlet = new FletShips();
-                    compFlet = new FletShips();
+                    yourFlet = new FletShips(yourMap);
+                    compFlet = new FletShips(compMap);
+                    yourFire = new Fire(compMap,compFlet);
+                    compFire = new Fire(yourMap,yourFlet);
                     System.out.println("Игра началась! Введите map чтобы расставить корабли.");
                     break;
                 case MAP:
-                    yourFlet.setShips(yourMap);
-                    compFlet.setShips(compMap);
-                    yourMap.drawMap(true);
-                    compMap.drawMap(false);
+                    if (yourFlet != null) {
+                        yourFlet.setShips();
+                    }
+                    if (compFlet != null) {
+                        compFlet.setShips();
+                    }
+                    if (yourMap != null) {
+                        yourMap.drawMap(true);
+                    }
+                    if (compMap != null) {
+                        compMap.drawMap(true);
+                    }
                     System.out.println("Корабли расставлены, введите координаты выстрела.");
                     break;
                 case FIRE:
-                    System.out.println("Координаты выстрела:");
-                    System.out.println("X = " + commandParsing.getXcoordFire());
-                    System.out.println("Y = " + commandParsing.getYcoordFire());
+                    yourFire.setFireCoord(commandParsing.getXcoordFire(),commandParsing.getYcoordFire());
+                    if(yourFire.resultShotTest()){
+                        System.out.println("Вы попали");
+                    }else{
+                        System.out.println("Вы промахнулись. Ход соперника.");
+                        do{
+                            compFire.setFireCoord(1,1);
+                            if(compFire.resultShotTest()){
+                                System.out.println("Соперник попал");
+                            }else{
+                                System.out.println("Соперник промахнулся. Ваш ход.");
+                                break;
+                            }
+                        }while(true);
+                    }
                     break;
                 case ERROR_MAP_NOT_START:
                     System.out.println("Ошибка! Нельзя расставить корабли, игра не начата. Введите start.");

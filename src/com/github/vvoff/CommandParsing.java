@@ -60,7 +60,7 @@ public class CommandParsing {
             state = InputState.NONE;
         }
         if (command.equalsIgnoreCase(InputState.START.toString())) {
-            listState.removeAll(listState);
+            listState.clear();
             listState.add(InputState.START);
             state = InputState.START;
         }

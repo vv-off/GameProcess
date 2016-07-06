@@ -1,7 +1,6 @@
 package com.github.vvoff;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Ship {
 

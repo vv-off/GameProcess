@@ -6,8 +6,10 @@ import java.util.Random;
 public class FletShips {
 
     private ArrayList<Ship> listShips = new ArrayList<>();
+    private Map map;
 
-    FletShips() {
+    FletShips(Map map) {
+        this.map = map;
         int[] decks = {4, 3, 3, 2, 2, 2, 1, 1, 1, 1};
         for (int i = 0; i < 10; i++) {
             listShips.add(new Ship(decks[i]));
@@ -15,7 +17,7 @@ public class FletShips {
     }
 
     //устанавливаем флот на карте
-    public void setShips(Map map) {
+    public void setShips() {
         Random random = new Random();
         boolean result;
         int x, y;
@@ -24,7 +26,7 @@ public class FletShips {
             do {
                 x = random.nextInt(9) + 1;
                 y = random.nextInt(9) + 1;
-                if (veriCoordShip(x, y, i, map)) {
+                if (veriCoordShip(x, y, i)) {
                     for (int j = 0; j < listShips.get(i).getNumberOfDecks(); j++) {
                         map.setMassivMap(ElementMap.SHIP_DECK, listShips.get(i).getShipCoordX(j), listShips.get(i).getShipCoordY(j));
                         result = true;
@@ -35,7 +37,7 @@ public class FletShips {
     }
 
     //проверяем координаты палуб корабля и строим его
-    private boolean veriCoordShip(int x, int y, int listShipIndex, Map map) {
+    private boolean veriCoordShip(int x, int y, int listShipIndex) {
         Random random = new Random();
         int vector = random.nextInt(4);
         boolean result = false;
