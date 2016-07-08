@@ -10,7 +10,7 @@ public class CommandParsing {
     private int xCoordFire;
     private int yCoordFire;
     private char[] ch = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'};
-    private ArrayList<InputState> listState = new ArrayList<>();
+    private ArrayList<InputState> listState = new ArrayList<InputState>();
 
     public int getXcoordFire() {
         return xCoordFire;

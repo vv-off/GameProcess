@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class FletShips {
 
-    private ArrayList<Ship> listShips = new ArrayList<>();
+    private ArrayList<Ship> listShips = new ArrayList<Ship>();
     private Map map;
 
     FletShips(Map map) {
@@ -34,6 +34,10 @@ public class FletShips {
                 } else result = false;
             } while (!result);
         }
+    }
+
+    public ArrayList<Ship> getShips(){
+        return listShips;
     }
 
     //проверяем координаты палуб корабля и строим его

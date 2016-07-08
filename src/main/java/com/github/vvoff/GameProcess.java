@@ -3,6 +3,7 @@ package com.github.vvoff;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Random;
 
 public class GameProcess {
     public static void main(String args[]) throws IOException {
@@ -10,13 +11,15 @@ public class GameProcess {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         commandParsing.setCommand(InputState.NONE.toString());
         String command;
+        Random random = new Random();
+        FireResult fireResultElement;
 
         Map yourMap = null;
         Map compMap = null;
         FletShips yourFlet = null;
         FletShips compFlet = null;
         Fire yourFire = null;
-        Fire compFire = null;
+        FireComp compFire = null;
 
         out:
         while (true) {
@@ -30,7 +33,7 @@ public class GameProcess {
                     yourFlet = new FletShips(yourMap);
                     compFlet = new FletShips(compMap);
                     yourFire = new Fire(compMap,compFlet);
-                    compFire = new Fire(yourMap,yourFlet);
+                    compFire = new FireComp(yourMap,yourFlet);
                     System.out.println("Игра началась! Введите map чтобы расставить корабли.");
                     break;
                 case MAP:
@@ -50,26 +53,48 @@ public class GameProcess {
                     break;
                 case FIRE:
                     yourFire.setFireCoord(commandParsing.getXcoordFire(),commandParsing.getYcoordFire());
-                    if(yourFire.resultShotTest()){
-                        System.out.println("Вы попали");
+                    fireResultElement = yourFire.fire();
+                    if(yourFire.hit(fireResultElement)){
+                        if(fireResultElement.compareTo(FireResult.HIT)==0)System.out.println("Вы попали!");
+                        if(fireResultElement.compareTo(FireResult.KILL)==0)System.out.println("Вы подбили корабль!");
+                        if(fireResultElement.compareTo(FireResult.WIN)==0) {
+                            System.out.println("Вы выиграли");
+                            break out;
+                        }
                     }else{
-                        System.out.println("Вы промахнулись. Ход соперника.");
+                        if(fireResultElement.compareTo(FireResult.MISS)==0)System.out.println("Вы промахнулись. Ход соперника.");
+                        if(fireResultElement.compareTo(FireResult.REPEAT_FIRE)==0)System.out.println("Промах, корабль уже подбит/убит ранее");
                         do{
-                            compFire.setFireCoord(1,1);
-                            if(compFire.resultShotTest()){
-                                System.out.println("Соперник попал");
+                            compFire.setFireCoord(random.nextInt(10)+1,random.nextInt(10)+1);
+                            fireResultElement = compFire.fire();
+                            if(compFire.hit(fireResultElement)){
+                                if(fireResultElement.compareTo(FireResult.HIT)==0){
+                                    System.out.println("Соперник попал!");
+                                    //пробуем добить корабль
+
+                                }
+                                if(fireResultElement.compareTo(FireResult.KILL)==0){
+                                    System.out.println("Соперник подбил корабль!");
+                                }
+                                if(fireResultElement.compareTo(FireResult.WIN)==0) {
+                                    System.out.println("Соперник выиграл");
+                                    break out;
+                                }
                             }else{
-                                System.out.println("Соперник промахнулся. Ваш ход.");
+                                if(fireResultElement.compareTo(FireResult.MISS)==0)System.out.println("Соперник промахнулся. Ваш ход.");
+                                if(fireResultElement.compareTo(FireResult.REPEAT_FIRE)==0)System.out.println("Промах, корабль уже подбит/убит ранее");
                                 break;
                             }
                         }while(true);
                     }
+                    yourMap.drawMap(true);
+                    compMap.drawMap(false);
                     break;
                 case ERROR_MAP_NOT_START:
                     System.out.println("Ошибка! Нельзя расставить корабли, игра не начата. Введите start.");
                     break;
                 case ERROR_MAP_IS_FIGHTING:
-                    System.out.println("Ошибка! Нельзя расставить корабли. Идет бой.");
+                    System.out.println("Ошибка! Нельзя расставлять корабли! Идёт бой.");
                     System.out.println("Введите координаты встрела или start для создания новой игры.");
                     break;
                 case ERROR_MAP_IS_ALREADY:

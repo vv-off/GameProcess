@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Ship {
 
     private int numberOfDecks;
-    private ArrayList<Deck> listDeck = new ArrayList<>();
+    private ArrayList<Deck> listDeck = new ArrayList<Deck>();
     private int numDeckDestroyed = 0;
     private boolean shipDestroyed;
 
@@ -56,4 +56,15 @@ public class Ship {
     public int getNumberOfDecks() {
         return numberOfDecks;
     }
+
+    //установить признак разрушения палубы корабля
+    public void setShipDestroyedDeck(int numDeck, boolean destroyed) {
+        listDeck.get(numDeck).setDestroyed(destroyed);
+    }
+
+    public boolean getShipDestroyedDeck(int numDeck) {
+        return listDeck.get(numDeck).isDestroyed();
+    }
 }
+
+
